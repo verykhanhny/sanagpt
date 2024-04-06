@@ -30,21 +30,15 @@ try {
   console.error('Error parsing JSON:', err);
 }
 
-/*
 const aiClient = new OpenAI({
     apiKey: config.OPENAI_KEY
 })
-*/
 
-let messages = [
-    {
-        role: "user",
-        content: "You are talking in a group chat environment. Your name is Sana. You will be given input in the format [\"username\", \"chat message\"]. Each username is a different person. Your response should either address the individual or the group if applicable."
-    },
+let conversation = [
     {
         role: "system",
-        content: "Got it! Feel free to provide the input, and I'll respond accordingly."
-    }
+        content: "You are talking in a group chat environment. Your name is Sana. You will be given input in the format [\"username\", \"chat message\"]. Each username is a different person. Your response should either address the individual or the group if applicable."
+    },
 ];
 
 // Get port, or default to 3000
@@ -115,11 +109,30 @@ app.post('/interactions', async function (req, res) {
       if (username === null) {
         username = member.user.username;
       }
+
+      // Push message into conversation
+      conversation.push({
+        role: "user",
+        content: "[\"" + username + "\", \"" + data.options[0].value + "\"]"
+      });
+
+      // Get response from OpenAI
+      completion = await aiClient.chat.completions({
+        model: "gpt-3.5-turbo",
+        messages: conversation
+      })
+
+      // Push response onto conversion
+      conversation.push({
+        role: "assistant",
+        content: completion.choices[0].message.content
+      });
+
       // Send a message into the channel where command was triggered from
       return res.send({
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         data: {
-          content: 'From ' + username + ' message \"' + data.options[0].value + '\"',
+          content: completion.choices[0].message.content,
         },
       });
     }
