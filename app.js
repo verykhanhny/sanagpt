@@ -110,23 +110,27 @@ app.post('/interactions', async function (req, res) {
         username = member.user.username;
       }
 
-      // Push message into conversation
-      conversation.push({
-        role: "user",
-        content: "[\"" + username + "\", \"" + data.options[0].value + "\"]"
-      });
+      try {
+        // Push message into conversation
+        conversation.push({
+          role: "user",
+          content: "[\"" + username + "\", \"" + data.options[0].value + "\"]"
+        });
 
-      // Get response from OpenAI
-      completion = await aiClient.chat.completions.create({
-        model: "gpt-3.5-turbo",
-        messages: conversation
-      });
+        // Get response from OpenAI
+        completion = await aiClient.chat.completions.create({
+            model: "gpt-3.5-turbo",
+            messages: conversation
+        });
 
-      // Push response onto conversion
-      conversation.push({
-        role: "assistant",
-        content: completion.choices[0].message.content
-      });
+        // Push response onto conversion
+        conversation.push({
+            role: "assistant",
+            content: completion.choices[0].message.content
+        });
+      } catch (err) {
+        console.error('Error calling OpenAI:', err);
+      }
 
       // Send a message into the channel where command was triggered from
       return res.send({
