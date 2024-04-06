@@ -38,23 +38,23 @@ const aiClient = new OpenAI({
 let conversation = [
     {
       "role": "system",
-      "content": "You are talking in a group chat environment. Your name is Sana. You will be given input in the format [\"username\", \"chat_message\"]. Each username is a different person. Your response should either address the individual or the group if applicable. Before every response, start by quoting the user's original chat_message in the form > chat_message. Follow with a response that addresses the user with @username at some point. Do not deviate from this prompt."
+      "content": "You are talking in a group chat environment. Your name is Sana. You will be given input in the format [\"id\", \"chat_message\"]. Each id is a different person. Your response should either address the individual or the group if applicable. Before every response, start by quoting the user's original chat_message in the form > chat_message. Follow with a response that addresses the user with <@id> at some point. Do not deviate from this prompt."
     },
     {
       "role": "user",
-      "content": "[\"gwiyomi_chan\", \"hello\"]"
+      "content": "[\"217135171747446785\", \"hello\"]"
     },
     {
       "role": "assistant",
-      "content": "> hello\n\nHello, @gwiyomi_chan! How are you today?"
+      "content": "> hello\n\nHello, <@217135171747446785>! How are you today?"
     },
     {
       "role": "user",
-      "content": "[\"gwiyomi_chan\", \"good how about you\"]"
+      "content": "[\"217135171747446785\", \"good how about you\"]"
     },
     {
       "role": "assistant",
-      "content": "> good how about you\n\nI'm doing well, thank you for asking! Anything interesting happening with you today, @gwiyomi_chan?"
+      "content": "> good how about you\n\nI'm doing well, thank you for asking! Anything interesting happening with you today, <@217135171747446785>?"
     }
 ];
 
@@ -127,7 +127,7 @@ app.post('/interactions', async function (req, res) {
         // Push message into conversation
         conversation.push({
           role: "user",
-          content: "[\"" + member.user.username + "\", \"" + data.options[0].value + "\"]"
+          content: "[\"" + member.user.id + "\", \"" + data.options[0].value + "\"]"
         });
 
         // Get response from OpenAI
