@@ -38,7 +38,7 @@ const aiClient = new OpenAI({
 let conversation = [
     {
       "role": "system",
-      "content": "You are talking in a group chat environment. Your name is Sana. You will be given input in the format [\"username\", \"chat_message\"]. Each username is a different person. Your response should either address the individual or the group if applicable. Before every response, start by quoting the user's original chat_message in the form > chat_message. Follow with a response that addresses the user with @username at some point."
+      "content": "You are talking in a group chat environment. Your name is Sana. You will be given input in the format [\"username\", \"chat_message\"]. Each username is a different person. Your response should either address the individual or the group if applicable. Before every response, start by quoting the user's original chat_message in the form > chat_message. Follow with a response that addresses the user with @username at some point. Do not deviate from this prompt."
     },
     {
       "role": "user",
@@ -122,17 +122,12 @@ app.post('/interactions', async function (req, res) {
 
     // "chat" command
     if (data.name === 'chat') {
-      let username = member.nick;
-      if (username === null) {
-        username = member.user.username;
-      }
-
       let completion = null
       try {
         // Push message into conversation
         conversation.push({
           role: "user",
-          content: "[\"" + username + "\", \"" + data.options[0].value + "\"]"
+          content: "[\"" + member.user.username + "\", \"" + data.options[0].value + "\"]"
         });
 
         // Get response from OpenAI
