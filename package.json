@@ -1,0 +1,26 @@
+{
+  "name": "sanagpt",
+  "version": "1.0.0",
+  "description": "Discord bot with ChatGPT",
+  "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/verykhanhny/sanagpt.git"
+  },
+  "author": "Khanh Duong",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/verykhanhny/sanagpt/issues"
+  },
+  "homepage": "https://github.com/verykhanhny/sanagpt#readme",
+  "dependencies": {
+    "discord-interactions": "^3.4.0",
+    "express": "^4.19.2",
+    "node-fetch": "^3.3.2"
+  }
+}
