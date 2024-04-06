@@ -110,6 +110,7 @@ app.post('/interactions', async function (req, res) {
         username = member.user.username;
       }
 
+      let completion = null
       try {
         // Push message into conversation
         conversation.push({
@@ -118,7 +119,7 @@ app.post('/interactions', async function (req, res) {
         });
 
         // Get response from OpenAI
-        const completion = await aiClient.chat.completions.create({
+        completion = await aiClient.chat.completions.create({
             model: "gpt-3.5-turbo",
             messages: conversation
         });
