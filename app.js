@@ -83,7 +83,7 @@ InstallGlobalCommands(config.APP_ID, config.DISCORD_TOKEN, ALL_COMMANDS);
  */
 app.post('/interactions', async function (req, res) {
   // Interaction type and data
-  const { type, id, data } = req.body;
+  const { type, member, data } = req.body;
 
   /**
    * Handle verification requests
@@ -111,9 +111,9 @@ app.post('/interactions', async function (req, res) {
 
     // "chat" command
     if (data.name === 'chat') {
-      let username = data.member.nick;
+      let username = member.nick;
       if (nick === null) {
-        username = data.member.user.username;
+        username = member.user.username;
       }
       // Send a message into the channel where command was triggered from
       return res.send({
