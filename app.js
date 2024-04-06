@@ -112,7 +112,7 @@ app.post('/interactions', async function (req, res) {
     // "chat" command
     if (data.name === 'chat') {
       let username = member.nick;
-      if (nick === null) {
+      if (username === null) {
         username = member.user.username;
       }
       // Send a message into the channel where command was triggered from
