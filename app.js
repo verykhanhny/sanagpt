@@ -138,7 +138,12 @@ app.post('/interactions', async function (req, res) {
         // Get response from OpenAI
         completion = await aiClient.chat.completions.create({
             model: "gpt-3.5-turbo",
-            messages: conversation
+            messages: conversation,
+            temperature: 1,
+            max_tokens: 4096,
+            top_p: 1,
+            frequency_penalty: 0,
+            presence_penalty: 0,
         });
 
         // Push response onto conversion
