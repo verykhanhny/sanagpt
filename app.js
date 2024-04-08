@@ -166,17 +166,17 @@ async function chatResponse(token, member, data) {
 async function drawResponse(token, member, data) {
   const aiClient = GetAiClient(config);
 
-  const response = await aiClient.createImage({
+  const response = await aiClient.images.generate({
     model: "dall-e-2",
     prompt: data.options[0].value,
     n: 1,
     size: "1024x1024",
-  })
+  });
 
   const options = {
     method: 'POST',
     body: {
-      content: `> ${data.options[0].value}\n<@${member.user.id}>\n${response.data.data[0].url}`
+      content: `> ${data.options[0].value}\n<@${member.user.id}>\n${response.data[0].url}`
     },
   };
   DiscordRequest(`/webhooks/${config.APP_ID}/${token}`, config, options)
