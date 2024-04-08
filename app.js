@@ -78,7 +78,9 @@ async function handleInteractions(req, res) {
   if (guild_id === undefined || guild_id === null) {
     return res.send({
       type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-      content: "Sana only works in server chat!"
+      data: {
+        content: "Sana only works in server chat!"
+      }
     })
   }
 
