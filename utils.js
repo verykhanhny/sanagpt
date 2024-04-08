@@ -19,7 +19,7 @@ export async function GetConfig() {
 }
 
 export function GetAiClient(config) {
-  if (aiClient === null) {
+  if (aiClient === undefined || aiClient === null) {
     aiClient = new OpenAI({
       apiKey: config.OPENAI_KEY
     });
