@@ -11,9 +11,7 @@ const app = express();
 
 const config = await GetConfig();
 
-const aiClient = new OpenAI({
-    apiKey: config.OPENAI_KEY
-})
+let aiClient = null
 
 let conversation = [
     {
@@ -70,9 +68,15 @@ app.use(express.json({ verify: VerifyDiscordRequest(config.PUBLIC_KEY) }));
 /**
  * Interactions endpoint URL where Discord will send HTTP requests
  */
-app.post('/interactions', async function (req, res) {
+app.post('/interactions', handleInteractions);
+
+app.listen(PORT, () => {
+  console.log('Listening on port', PORT);
+});
+
+async function handleInteractions(req, res) {
   // Interaction type and data
-  const { type, member, data, token } = req.body;
+  const { type, token, member, data } = req.body;
 
   /**
    * Handle verification requests
@@ -98,44 +102,14 @@ app.post('/interactions', async function (req, res) {
 
     // "chat" command
     if (data.name === 'chat') {
-      let completion = null
-      try {
-        // Push message into conversation
-        conversation.push({
-          role: "user",
-          content: "[\"" + member.user.id + "\", \"" + data.options[0].value + "\"]"
-        });
-
-        // Get response from OpenAI
-        completion = await aiClient.chat.completions.create({
-            model: "gpt-3.5-turbo",
-            messages: conversation,
-            temperature: 1,
-            max_tokens: 4096,
-            top_p: 1,
-            frequency_penalty: 0,
-            presence_penalty: 0,
-        });
-
-        // Push response onto conversion
-        conversation.push({
-            role: "assistant",
-            content: completion.choices[0].message.content
-        });
-      } catch (err) {
-        console.error('Error calling OpenAI:', err);
-      }
-
+      chatResponse(token, member, data)
       // Send a message into the channel where command was triggered from
       return res.send({
-        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-        data: {
-          content: completion.choices[0].message.content,
-        },
+        type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
       });
     }
   }
-});
+}
 
 async function testResponse(token) {
   const options = {
@@ -148,6 +122,46 @@ async function testResponse(token) {
   DiscordRequest(`/webhooks/${config.APP_ID}/${token}`, config, options)
 }
 
-app.listen(PORT, () => {
-  console.log('Listening on port', PORT);
-});
+async function chatResponse(token, member, data) {
+  if (aiClient === null) {
+    aiClient = new OpenAI({
+      apiKey: config.OPENAI_KEY
+    })
+  }
+
+  let completion = null
+  try {
+    // Push message into conversation
+    conversation.push({
+      role: "user",
+      content: "[\"" + member.user.id + "\", \"" + data.options[0].value + "\"]"
+    });
+
+    // Get response from OpenAI
+    completion = await aiClient.chat.completions.create({
+        model: "gpt-3.5-turbo",
+        messages: conversation,
+        temperature: 1,
+        max_tokens: 4096,
+        top_p: 1,
+        frequency_penalty: 0,
+        presence_penalty: 0,
+    });
+
+    // Push response onto conversation
+    conversation.push({
+        role: "assistant",
+        content: completion.choices[0].message.content
+    });
+  } catch (err) {
+    console.error('Error calling OpenAI:', err);
+  }
+
+  const options = {
+    method: 'POST',
+    body: {
+      content: completion.choices[0].message.content
+    },
+  }
+  DiscordRequest(`/webhooks/${config.APP_ID}/${token}`, config, options)
+}
