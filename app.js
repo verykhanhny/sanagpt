@@ -176,7 +176,16 @@ async function drawResponse(token, member, data) {
   const options = {
     method: 'POST',
     body: {
-      content: `> ${data.options[0].value}\n<@${member.user.id}>\n${response.data[0].url}`
+      content: `> ${data.options[0].value}\n\n<@${member.user.id}>\n\n`,
+      embeds: [
+        {
+          image: {
+            url: response.data[0].url,
+            height: 1024,
+            width: 1024
+          },
+        },
+      ]
     },
   };
   DiscordRequest(`/webhooks/${config.APP_ID}/${token}`, config, options)
