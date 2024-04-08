@@ -83,7 +83,7 @@ let conversation = [
 ];
 
 // Get port
-const PORT = 443;
+const PORT = 11111;
 // Parse request body and verifies incoming requests using discord-interactions package
 app.use(express.json({ verify: VerifyDiscordRequest(config.PUBLIC_KEY) }));
 
