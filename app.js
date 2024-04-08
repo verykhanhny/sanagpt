@@ -145,7 +145,7 @@ async function testResponse(token) {
       content: 'Hello! ' + getRandomEmoji(),
     },
   }
-  DiscordRequest("/webhooks/" + config.APP_ID + "/" + token, config, options)
+  DiscordRequest(`/webhooks/${config.APP_ID}/${token}`, config, options)
 }
 
 app.listen(PORT, () => {

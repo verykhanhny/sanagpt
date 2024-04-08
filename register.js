@@ -26,4 +26,4 @@ const ALL_COMMANDS = [TEST_COMMAND, CHAT_COMMAND];
 
 const config = await GetConfig();
   
-InstallGlobalCommands(config.APP_ID, config.DISCORD_TOKEN, ALL_COMMANDS);
+InstallGlobalCommands(config, ALL_COMMANDS);
