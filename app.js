@@ -178,7 +178,7 @@ async function drawResponse(token, member, data) {
     const aiClient = GetAiClient(config);
 
     const response = await aiClient.images.generate({
-      model: "dall-e-2",
+      model: "dall-e-3",
       prompt: data.options[0].value,
       n: 1,
       size: "1024x1024",

@@ -30,7 +30,7 @@ async function testChat(aiClient) {
 
 async function testDraw(aiClient) {
     const draw = await aiClient.images.generate({
-        model: "dall-e-2",
+        model: "dall-e-3",
         prompt: "A helpful assistant",
         n: 1,
         size: "1024x1024",
