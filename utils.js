@@ -28,7 +28,7 @@ export function VerifyDiscordRequest(clientKey) {
   };
 }
 
-export async function DiscordRequest(endpoint, token, options) {
+export async function DiscordRequest(endpoint, config, options) {
   // append endpoint to root API URL
   const url = 'https://discord.com/api/v10/' + endpoint;
   // Stringify payloads
@@ -36,7 +36,7 @@ export async function DiscordRequest(endpoint, token, options) {
   // Use node-fetch to make requests
   const res = await fetch(url, {
     headers: {
-      Authorization: `Bot ${token}`,
+      Authorization: `Bot ${config.DISCORD_TOKEN}`,
       'Content-Type': 'application/json; charset=UTF-8',
       'User-Agent': 'Sana (https://github.com/verykhanhny/sanagpt, 1.0.0)',
     },

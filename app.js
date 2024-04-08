@@ -4,7 +4,7 @@ import {
   InteractionType,
   InteractionResponseType,
 } from 'discord-interactions';
-import { GetConfig, VerifyDiscordRequest, getRandomEmoji } from './utils.js';
+import { GetConfig, DiscordRequest, VerifyDiscordRequest, getRandomEmoji } from './utils.js';
 
 // Create an express app
 const app = express();
@@ -72,7 +72,7 @@ app.use(express.json({ verify: VerifyDiscordRequest(config.PUBLIC_KEY) }));
  */
 app.post('/interactions', async function (req, res) {
   // Interaction type and data
-  const { type, member, data } = req.body;
+  const { type, member, data, token } = req.body;
 
   /**
    * Handle verification requests
@@ -88,13 +88,11 @@ app.post('/interactions', async function (req, res) {
   if (type === InteractionType.APPLICATION_COMMAND) {
     // "test" command
     if (data.name === 'test') {
+      // Call the func that will update the message
+      testResponse(token)
       // Send a message into the channel where command was triggered from
       return res.send({
-        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-        data: {
-          // Fetches a random emoji to send from a helper function
-          content: 'Hello! ' + getRandomEmoji(),
-        },
+        type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
       });
     }
 
@@ -138,6 +136,17 @@ app.post('/interactions', async function (req, res) {
     }
   }
 });
+
+async function testResponse(token) {
+  const options = {
+    method: 'POST',
+    data: {
+      // Fetches a random emoji to send from a helper function
+      content: 'Hello! ' + getRandomEmoji(),
+    },
+  }
+  DiscordRequest("/webhooks/" + config.APP_ID + "/" + token, config, options)
+}
 
 app.listen(PORT, () => {
   console.log('Listening on port', PORT);
