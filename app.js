@@ -124,58 +124,60 @@ async function testResponse(token) {
       // Fetches a random emoji to send from a helper function
       content: 'Hello! ' + getRandomEmoji(),
     },
-  }
+  };
   DiscordRequest(`/webhooks/${config.APP_ID}/${token}`, config, options)
 }
 
 async function chatResponse(token, member, data) {
   const aiClient = GetAiClient(config);
 
-  let completion = null
-  try {
-    // Push message into conversation
-    conversation.push({
-      role: "user",
-      content: `["${member.user.id}", "${data.options[0].value}"]`
-    });
+  // Push message into conversation
+  conversation.push({
+    role: "user",
+    content: `["${member.user.id}", "${data.options[0].value}"]`
+  });
 
-    // Get response from OpenAI
-    completion = await aiClient.chat.completions.create({
-        model: "gpt-3.5-turbo",
-        messages: conversation,
-        temperature: 1,
-        max_tokens: 4096,
-        top_p: 1,
-        frequency_penalty: 0,
-        presence_penalty: 0,
-    });
+  // Get response from OpenAI
+  const response = await aiClient.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: conversation,
+      temperature: 1,
+      max_tokens: 4096,
+      top_p: 1,
+      frequency_penalty: 0,
+      presence_penalty: 0,
+  });
 
-    // Push response onto conversation
-    conversation.push({
-        role: "assistant",
-        content: completion.choices[0].message.content
-    });
-  } catch (err) {
-    console.error('Error calling OpenAI:', err);
-  }
+  // Push response onto conversation
+  conversation.push({
+      role: "assistant",
+      content: response.choices[0].message.content
+  });
 
   const options = {
     method: 'POST',
     body: {
-      content: `> ${data.options[0].value}\n\n${completion.choices[0].message.content}`
+      content: `> ${data.options[0].value}\n\n${response.choices[0].message.content}`
     },
-  }
+  };
   DiscordRequest(`/webhooks/${config.APP_ID}/${token}`, config, options)
 }
 
 async function drawResponse(token, member, data) {
   const aiClient = GetAiClient(config);
-  
+
+  const response = await aiClient.images.create({
+    model: "dall-e-2",
+    prompt: data.options[0].value,
+    n: 1,
+    size: "1024x1024",
+  })
+
   const options = {
     method: 'POST',
     body: {
-      content: `Not Implemented`
+      content: `> ${data.options[0].value}\n<@${member.user.id}>\n${response.data.data[0].url}`
     },
-  }
+  };
   DiscordRequest(`/webhooks/${config.APP_ID}/${token}`, config, options)
 }
