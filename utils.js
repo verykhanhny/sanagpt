@@ -1,5 +1,19 @@
 import fetch from 'node-fetch';
 import { verifyKey } from 'discord-interactions';
+import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
+
+export async function GetConfig() {
+  // Read config json
+  const client = new SecretManagerServiceClient();
+  const [accessResponse] = await client.accessSecretVersion({
+      name: 'projects/87051143114/secrets/discord-config/versions/latest',
+  });
+  const payload = accessResponse.payload.data.toString('utf8');
+
+  const config = JSON.parse(payload);
+  console.log('JSON data loaded successfully on startup.');
+  return config
+}
 
 export function VerifyDiscordRequest(clientKey) {
   return function (req, res, buf, encoding) {

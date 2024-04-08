@@ -37,6 +37,8 @@ jobs:
 
       - name: 'Build, push, and deploy'
         run: |
+          npm ci --only=production
+          npm run register
           docker build . --tag us-central1-docker.pkg.dev/sanagpt/image/sanagpt-image:latest
           docker push us-central1-docker.pkg.dev/sanagpt/image/sanagpt-image:latest
           gcloud run deploy sanagpt-service --region us-central1 --image us-central1-docker.pkg.dev/sanagpt/image/sanagpt-image:latest --port 11111

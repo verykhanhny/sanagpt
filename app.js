@@ -4,36 +4,16 @@ import {
   InteractionType,
   InteractionResponseType,
 } from 'discord-interactions';
-import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
-import { VerifyDiscordRequest, getRandomEmoji, InstallGlobalCommands, DiscordRequest } from './utils.js';
+import { GetConfig, VerifyDiscordRequest, getRandomEmoji } from './utils.js';
 
 // Create an express app
 const app = express();
 
-// Read config json
-let payload = null;
-try {
-    const client = new SecretManagerServiceClient();
-    const [accessResponse] = await client.accessSecretVersion({
-        name: 'projects/87051143114/secrets/discord-config/versions/latest',
-    });
-    payload = accessResponse.payload.data.toString('utf8');
-} catch (err) {
-    console.error('Error getting discord config secret:', err)
-}
-
-let config = null;
-try {
-  config = JSON.parse(payload);
-  console.log('JSON data loaded successfully on startup.');
-} catch (err) {
-  console.error('Error parsing JSON:', err);
-}
+const config = await GetConfig();
 
 const aiClient = new OpenAI({
     apiKey: config.OPENAI_KEY
 })
-
 
 let conversation = [
     {
@@ -86,32 +66,6 @@ let conversation = [
 const PORT = 11111;
 // Parse request body and verifies incoming requests using discord-interactions package
 app.use(express.json({ verify: VerifyDiscordRequest(config.PUBLIC_KEY) }));
-
-// Simple test command
-const TEST_COMMAND = {
-    name: 'test',
-    description: 'Test command',
-    type: 1,
-  };
-
-// Simple test command
-const CHAT_COMMAND = {
-    name: 'chat',
-    description: 'Chat with Sana',
-    type: 1,
-    options: [
-        {
-            name: "message",
-            description: "Your message to Sana",
-            type: 3,
-            required: true,
-        }
-    ]
-  };
-
-const ALL_COMMANDS = [TEST_COMMAND, CHAT_COMMAND];
-  
-InstallGlobalCommands(config.APP_ID, config.DISCORD_TOKEN, ALL_COMMANDS);
 
 /**
  * Interactions endpoint URL where Discord will send HTTP requests

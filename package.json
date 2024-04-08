@@ -6,6 +6,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
+    "register": "node register.js",
     "lint": "eslint ."
   },
   "repository": {
