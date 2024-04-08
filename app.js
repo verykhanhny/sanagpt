@@ -140,7 +140,7 @@ app.post('/interactions', async function (req, res) {
 async function testResponse(token) {
   const options = {
     method: 'POST',
-    data: {
+    body: {
       // Fetches a random emoji to send from a helper function
       content: 'Hello! ' + getRandomEmoji(),
     },
