@@ -7,7 +7,7 @@ const TEST_COMMAND = {
     type: 1,
 };
 
-// Simple test command
+// Chat with Sana using ChatGPT
 const CHAT_COMMAND = {
     name: 'chat',
     description: 'Chat with Sana',
@@ -22,7 +22,22 @@ const CHAT_COMMAND = {
     ]
 };
 
-const ALL_COMMANDS = [TEST_COMMAND, CHAT_COMMAND];
+// Draw with Sana using Dall-E
+const DRAW_COMMAND = {
+    name: 'draw',
+    description: 'Draw with Sana',
+    type: 1,
+    options: [
+        {
+            name: "prompt",
+            description: "Your prompt to Sana",
+            type: 3,
+            required: true,
+        }
+    ]
+}
+
+const ALL_COMMANDS = [TEST_COMMAND, CHAT_COMMAND, DRAW_COMMAND];
 
 const config = await GetConfig();
   
