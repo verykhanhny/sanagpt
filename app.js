@@ -166,7 +166,7 @@ async function chatResponse(token, member, data) {
 async function drawResponse(token, member, data) {
   const aiClient = GetAiClient(config);
 
-  const response = await aiClient.images.create({
+  const response = await aiClient.createImage({
     model: "dall-e-2",
     prompt: data.options[0].value,
     n: 1,
