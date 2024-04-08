@@ -73,7 +73,14 @@ app.listen(PORT, () => {
 
 async function handleInteractions(req, res) {
   // Interaction type and data
-  const { type, token, member, data } = req.body;
+  const { type, token, member, data, guildId } = req.body;
+
+  if (guildId === null) {
+    return res.send({
+      type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+      content: "Sana only works in server chat!"
+    })
+  }
 
   /**
    * Handle verification requests
