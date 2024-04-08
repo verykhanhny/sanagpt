@@ -1,6 +1,9 @@
 import fetch from 'node-fetch';
+import OpenAI from "openai";
 import { verifyKey } from 'discord-interactions';
 import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
+
+let aiClient = null
 
 export async function GetConfig() {
   // Read config json
@@ -13,6 +16,15 @@ export async function GetConfig() {
   const config = JSON.parse(payload);
   console.log('JSON data loaded successfully on startup.');
   return config
+}
+
+export function GetAiClient(config) {
+  if (aiClient === null) {
+    aiClient = new OpenAI({
+      apiKey: config.OPENAI_KEY
+    });
+  }
+  return aiClient;
 }
 
 export function VerifyDiscordRequest(clientKey) {

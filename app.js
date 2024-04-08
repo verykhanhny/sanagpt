@@ -1,17 +1,14 @@
 import express from 'express';
-import OpenAI from "openai";
 import {
   InteractionType,
   InteractionResponseType,
 } from 'discord-interactions';
-import { GetConfig, DiscordRequest, VerifyDiscordRequest, getRandomEmoji } from './utils.js';
+import { GetConfig, DiscordRequest, VerifyDiscordRequest, GetAiClient, getRandomEmoji } from './utils.js';
 
 // Create an express app
 const app = express();
 
 const config = await GetConfig();
-
-let aiClient = null
 
 let conversation = [
   {
@@ -108,6 +105,15 @@ async function handleInteractions(req, res) {
         type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
       });
     }
+
+    // "draw" command
+    if (data.name === 'draw') {
+      drawResponse(token, member, data)
+      // Send a message into the channel where command was triggered from
+      return res.send({
+        type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
+      });
+    }
   }
 }
 
@@ -123,11 +129,7 @@ async function testResponse(token) {
 }
 
 async function chatResponse(token, member, data) {
-  if (aiClient === null) {
-    aiClient = new OpenAI({
-      apiKey: config.OPENAI_KEY
-    })
-  }
+  const aiClient = GetAiClient(config);
 
   let completion = null
   try {
@@ -161,6 +163,18 @@ async function chatResponse(token, member, data) {
     method: 'POST',
     body: {
       content: `> ${data.options[0].value}\n\n${completion.choices[0].message.content}`
+    },
+  }
+  DiscordRequest(`/webhooks/${config.APP_ID}/${token}`, config, options)
+}
+
+async function drawResponse(token, member, data) {
+  const aiClient = GetAiClient(config);
+  
+  const options = {
+    method: 'POST',
+    body: {
+      content: `Not Implemented`
     },
   }
   DiscordRequest(`/webhooks/${config.APP_ID}/${token}`, config, options)
