@@ -151,7 +151,7 @@ async function chatResponse(token, member, data) {
     // Push response onto conversation
     conversation.push({
         role: "assistant",
-        content: `> ${data.options[0].value}\n\n${completion.choices[0].message.content}`
+        content: completion.choices[0].message.content
     });
   } catch (err) {
     console.error('Error calling OpenAI:', err);
@@ -160,7 +160,7 @@ async function chatResponse(token, member, data) {
   const options = {
     method: 'POST',
     body: {
-      content: completion.choices[0].message.content
+      content: `> ${data.options[0].value}\n\n${completion.choices[0].message.content}`
     },
   }
   DiscordRequest(`/webhooks/${config.APP_ID}/${token}`, config, options)
