@@ -1,8 +1,5 @@
 import express from 'express';
-import {
-  InteractionType,
-  InteractionResponseType,
-} from 'discord-interactions';
+import { InteractionType, InteractionResponseType } from 'discord-interactions';
 import { GetConfig, DiscordRequest, VerifyDiscordRequest, GetAiClient, getRandomEmoji } from './utils.js';
 
 // Create an express app
