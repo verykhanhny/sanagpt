@@ -2,6 +2,7 @@ import express from 'express';
 import {
   InteractionType,
   InteractionResponseType,
+  verifyKeyMiddleware,
 } from 'discord-interactions';
 import { GetConfig, DiscordRequest, VerifyDiscordRequest, GetAiClient, getRandomEmoji } from './utils.js';
 
@@ -60,7 +61,7 @@ let conversation = [
 // Get port
 const PORT = 11111;
 // Parse request body and verifies incoming requests using discord-interactions package
-app.use(express.json({ verify: VerifyDiscordRequest(config.PUBLIC_KEY) }));
+// app.use(express.json({ verify: VerifyDiscordRequest(config.PUBLIC_KEY) }));
 
 // Health check
 app.get('/', (req, res) => {
@@ -71,7 +72,7 @@ app.get('/', (req, res) => {
 /**
  * Interactions endpoint URL where Discord will send HTTP requests
  */
-app.post('/interactions', handleInteractions);
+app.post('/interactions', verifyKeyMiddleware(config.PUBLIC_KEY), handleInteractions);
 
 app.listen(PORT, () => {
   console.log('Listening on port', PORT);
