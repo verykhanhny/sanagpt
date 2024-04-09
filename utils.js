@@ -1,5 +1,6 @@
 import fetch from 'node-fetch';
 import OpenAI from 'openai';
+import { readFile }  from 'fs/promises';
 import { verifyKey } from 'discord-interactions';
 import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
 
@@ -7,11 +8,16 @@ let aiClient = null;
 
 export async function GetConfig() {
   // Read config json
-  const client = new SecretManagerServiceClient();
-  const [accessResponse] = await client.accessSecretVersion({
-    name: 'projects/87051143114/secrets/discord-config/versions/latest',
-  });
-  const payload = accessResponse.payload.data.toString('utf8');
+  let payload = null;
+  if (process.env.SELF_HOSTED) {
+    payload = await readFile('/data/config.json', 'utf8');
+  } else {
+    const client = new SecretManagerServiceClient();
+    const [accessResponse] = await client.accessSecretVersion({
+      name: 'projects/87051143114/secrets/discord-config/versions/latest',
+    });
+    payload = accessResponse.payload.data.toString('utf8');
+  }
 
   const config = JSON.parse(payload);
   console.log('JSON data loaded successfully on startup.');
