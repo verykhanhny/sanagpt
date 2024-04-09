@@ -62,6 +62,12 @@ const PORT = 11111;
 // Parse request body and verifies incoming requests using discord-interactions package
 app.use(express.json({ verify: VerifyDiscordRequest(config.PUBLIC_KEY) }));
 
+// Health check
+app.get('/', (req, res) => {
+  // Return a JSON response indicating the service is healthy
+  res.json(null);
+});
+
 /**
  * Interactions endpoint URL where Discord will send HTTP requests
  */

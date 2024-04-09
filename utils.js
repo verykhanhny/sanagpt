@@ -1,34 +1,34 @@
 import fetch from 'node-fetch';
-import OpenAI from "openai";
+import OpenAI from 'openai';
 import { verifyKey } from 'discord-interactions';
 import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
 
-let aiClient = null
+let aiClient = null;
 
 export async function GetConfig() {
   // Read config json
   const client = new SecretManagerServiceClient();
   const [accessResponse] = await client.accessSecretVersion({
-      name: 'projects/87051143114/secrets/discord-config/versions/latest',
+    name: 'projects/87051143114/secrets/discord-config/versions/latest',
   });
   const payload = accessResponse.payload.data.toString('utf8');
 
   const config = JSON.parse(payload);
   console.log('JSON data loaded successfully on startup.');
-  return config
+  return config;
 }
 
 export function GetAiClient(config) {
   if (aiClient === undefined || aiClient === null) {
     aiClient = new OpenAI({
-      apiKey: config.OPENAI_KEY
+      apiKey: config.OPENAI_KEY,
     });
   }
   return aiClient;
 }
 
 export function VerifyDiscordRequest(clientKey) {
-  return function (req, res, buf, encoding) {
+  return function (req, res, buf) {
     const signature = req.get('X-Signature-Ed25519');
     const timestamp = req.get('X-Signature-Timestamp');
 
@@ -42,7 +42,7 @@ export function VerifyDiscordRequest(clientKey) {
 
 export async function DiscordRequest(endpoint, config, options) {
   // append endpoint to root API URL
-  const url = 'https://discord.com/api/v10/' + endpoint;
+  const url = `https://discord.com/api/v10/${endpoint}`;
   // Stringify payloads
   if (options.body) options.body = JSON.stringify(options.body);
   // Use node-fetch to make requests
@@ -52,7 +52,7 @@ export async function DiscordRequest(endpoint, config, options) {
       'Content-Type': 'application/json; charset=UTF-8',
       'User-Agent': 'Sana (https://github.com/verykhanhny/sanagpt, 1.0.0)',
     },
-    ...options
+    ...options,
   });
   // throw API errors
   if (!res.ok) {
@@ -78,7 +78,7 @@ export async function InstallGlobalCommands(config, commands) {
 
 // Simple method that returns a random emoji from list
 export function getRandomEmoji() {
-  const emojiList = ['😭','😄','😌','🤓','😎','😤','🤖','😶‍🌫️','🌏','📸','💿','👋','🌊','✨'];
+  const emojiList = ['😭', '😄', '😌', '🤓', '😎', '😤', '🤖', '😶‍🌫️', '🌏', '📸', '💿', '👋', '🌊', '✨'];
   return emojiList[Math.floor(Math.random() * emojiList.length)];
 }
 
