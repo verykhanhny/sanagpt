@@ -37,7 +37,22 @@ const DRAW_COMMAND = {
     ]
 }
 
-const ALL_COMMANDS = [TEST_COMMAND, CHAT_COMMAND, DRAW_COMMAND];
+// Play a song with Sana
+const PLAY_COMMAND = {
+    name: 'play',
+    description: 'Play a song or video with Sana',
+    type: 1,
+    options: [
+        {
+            name: "title",
+            description: "Title of the song or video",
+            type: 3,
+            required: true,
+        }
+    ]
+}
+
+const ALL_COMMANDS = [TEST_COMMAND, CHAT_COMMAND, DRAW_COMMAND, PLAY_COMMAND];
 
 const config = await GetConfig();
   
