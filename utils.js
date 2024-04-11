@@ -1,7 +1,6 @@
 import fetch from 'node-fetch';
 import OpenAI from 'openai';
 import { readFile }  from 'fs/promises';
-import { verifyKey } from 'discord-interactions';
 
 let aiClient = null;
 
@@ -20,19 +19,6 @@ export function GetAiClient(config) {
     });
   }
   return aiClient;
-}
-
-export function VerifyDiscordRequest(clientKey) {
-  return function (req, res, buf) {
-    const signature = req.get('X-Signature-Ed25519');
-    const timestamp = req.get('X-Signature-Timestamp');
-
-    const isValidRequest = verifyKey(buf, signature, timestamp, clientKey);
-    if (!isValidRequest) {
-      res.status(401).send('Bad request signature');
-      throw new Error('Bad request signature');
-    }
-  };
 }
 
 export async function DiscordRequest(endpoint, config, options) {
