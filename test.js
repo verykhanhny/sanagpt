@@ -1,22 +1,22 @@
-import { GetAiClient, GetConfig } from './utils.js';
+import { GetAiClient, GetConfig } from "./utils.js";
 
 const config = await GetConfig();
 const aiClient = await GetAiClient(config);
 
-await testChat(aiClient)
-await testDraw(aiClient)
+await testChat(aiClient);
+await testDraw(aiClient);
 
 async function testChat(aiClient) {
   const chat = await aiClient.chat.completions.create({
     model: "gpt-3.5-turbo",
     messages: [
       {
-        "role": "system",
-        "content": "You are a helpful assistant."
+        role: "system",
+        content: "You are a helpful assistant.",
       },
       {
-        "role": "user",
-        "content": "Hello!"
+        role: "user",
+        content: "Hello!",
       },
     ],
     temperature: 1,
@@ -29,11 +29,11 @@ async function testChat(aiClient) {
 }
 
 async function testDraw(aiClient) {
-    const draw = await aiClient.images.generate({
-        model: "dall-e-3",
-        prompt: "A helpful assistant",
-        n: 1,
-        size: "1024x1024",
-    });
-    console.log(draw.data[0].url);
+  const draw = await aiClient.images.generate({
+    model: "dall-e-3",
+    prompt: "A helpful assistant",
+    n: 1,
+    size: "1024x1024",
+  });
+  console.log(draw.data[0].url);
 }

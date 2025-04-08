@@ -1,0 +1,15 @@
+version: "3"
+
+services:
+  sanagpt:
+    container_name: sanagpt-beta
+    image: sana-beta:latest
+    restart: always
+    volumes:
+      - ./data:/data:ro
+    networks:
+      - dev_network
+
+networks:
+  dev_network:
+    external: true

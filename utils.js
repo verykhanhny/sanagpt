@@ -1,14 +1,14 @@
-import fetch from 'node-fetch';
-import OpenAI from 'openai';
-import { readFile }  from 'fs/promises';
+import fetch from "node-fetch";
+import OpenAI from "openai";
+import { readFile } from "fs/promises";
 
 let aiClient = null;
 
 export async function GetConfig() {
   // Read config json
-  const payload = await readFile('/data/config.json', 'utf8');
+  const payload = await readFile("./beta.json", "utf8");
   const config = JSON.parse(payload);
-  console.log('JSON data loaded successfully on startup.');
+  console.log("JSON data loaded successfully on startup.");
   return config;
 }
 
@@ -30,8 +30,8 @@ export async function DiscordRequest(endpoint, config, options) {
   const res = await fetch(url, {
     headers: {
       Authorization: `Bot ${config.DISCORD_TOKEN}`,
-      'Content-Type': 'application/json; charset=UTF-8',
-      'User-Agent': 'Sana (https://github.com/verykhanhny/sanagpt, 1.0.0)',
+      "Content-Type": "application/json; charset=UTF-8",
+      "User-Agent": "Sana (https://github.com/verykhanhny/sanagpt, 1.0.0)",
     },
     ...options,
   });
@@ -51,7 +51,7 @@ export async function InstallGlobalCommands(config, commands) {
 
   try {
     // This is calling the bulk overwrite endpoint: https://discord.com/developers/docs/interactions/application-commands#bulk-overwrite-global-application-commands
-    await DiscordRequest(endpoint, config, { method: 'PUT', body: commands });
+    await DiscordRequest(endpoint, config, { method: "PUT", body: commands });
   } catch (err) {
     console.error(err);
   }
@@ -59,7 +59,22 @@ export async function InstallGlobalCommands(config, commands) {
 
 // Simple method that returns a random emoji from list
 export function getRandomEmoji() {
-  const emojiList = ['😭', '😄', '😌', '🤓', '😎', '😤', '🤖', '😶‍🌫️', '🌏', '📸', '💿', '👋', '🌊', '✨'];
+  const emojiList = [
+    "😭",
+    "😄",
+    "😌",
+    "🤓",
+    "😎",
+    "😤",
+    "🤖",
+    "😶‍🌫️",
+    "🌏",
+    "📸",
+    "💿",
+    "👋",
+    "🌊",
+    "✨",
+  ];
   return emojiList[Math.floor(Math.random() * emojiList.length)];
 }
 
